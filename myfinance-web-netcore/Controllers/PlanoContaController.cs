@@ -19,6 +19,7 @@ namespace myfinance_web_netcore.Controllers
             _myFinanceDbContext = myFinanceDbContext;
         }
         
+        [HttpGet]
         public IActionResult Index()
         {
             var listaPlanoContas = _myFinanceDbContext.PlanoConta;
@@ -81,6 +82,19 @@ namespace myfinance_web_netcore.Controllers
             
             return RedirectToAction("Index");
 
+        }
+
+        [HttpGet]
+        [Route("Excluir/{id}")]
+        public IActionResult Excluir(int id)
+        {
+            var planoConta = new PlanoConta() {
+                Id = id
+            };
+            _myFinanceDbContext.PlanoConta.Remove(planoConta);
+            _myFinanceDbContext.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
