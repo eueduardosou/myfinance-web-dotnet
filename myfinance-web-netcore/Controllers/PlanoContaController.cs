@@ -1,10 +1,11 @@
-
-
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using myfinance_web_netcore.Domain;
 using myfinance_web_netcore.Models;
 
 namespace myfinance_web_netcore.Controllers
-{
+{   
+    [Route("[controller]")]
     public class PlanoContaController : Controller
     {
         private readonly ILogger<PlanoContaController> _logger;
@@ -39,14 +40,50 @@ namespace myfinance_web_netcore.Controllers
             return View();
         }
 
-        public IActionResult Cadastro()
+        [HttpGet]
+        [Route("Cadastro")]
+        [Route("Cadastro/{id}")]
+        public IActionResult Cadastro(int? id)
         {
 
-            return View();
+            var planoConta = new PlanoContaModel();
+
+            if (id != null)
+            {
+                var planoContaDomain = _myFinanceDbContext.PlanoConta.Where(x => x.Id == id).FirstOrDefault();
+
+                planoConta.Id = planoContaDomain.Id;
+                planoConta.Descricao = planoContaDomain.Descricao;
+                planoConta.Tipo = planoContaDomain.Tipo;
+            }
+            return View(planoConta);
+        }
+
+        [HttpPost]
+        [Route("Cadastro")]
+        [Route("Cadastro/{id}")]
+        public IActionResult Cadastro(PlanoContaModel input)
+        {
+            var planoConta = new PlanoConta() {
+                Id = input.Id,
+                Descricao = input.Descricao,
+                Tipo = input.Tipo
+            };
+
+            _myFinanceDbContext.PlanoConta.Add(planoConta);
+            if (planoConta.Id == null) {
+                _myFinanceDbContext.PlanoConta.Add(planoConta);
+            } else {
+            _myFinanceDbContext.Attach(planoConta); 
+            _myFinanceDbContext.Entry(planoConta).State = EntityState.Modified; 
+            }
+            _myFinanceDbContext.SaveChanges();
+            
+            return RedirectToAction("Index");
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        
         public IActionResult Error()
         {
             return View("Error!");
