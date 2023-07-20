@@ -32,8 +32,7 @@
                 <td>@item.ItemPlanoConta.Tipo</td>
                 <td>@item.ItemPlanoConta.Descricao</td>
                 <td><button type="button" class="btn btn-warning" onclick="Editar(@item.Id.ToString())">Editar</button></td>
-                <td><button type="button" class="btn btn-warning" onclick="Excluir(@item.Id.ToString())">Excluir</button></td>
-
+                <td>@Html.ActionLink("Excluir", "Excluir", "Transacao", new { Id = @item.Id }, new { @class = "btn btn-danger" })</td>
             </tr>
         }
     }
